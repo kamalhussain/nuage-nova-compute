@@ -1,0 +1,58 @@
+#!/bin/bash
+# Here do anything needed to install the service
+# i.e. apt-get install -y foo  or  bzr branch http://myserver/mycode /srv/webroot
+# Make sure this hook exits cleanly and is idempotent, common problems here are
+# failing to account for a debconf question on a dependency, or trying to pull
+# from github without installing git first.
+
+update_config_file() {
+	if grep -q "^[[:blank:]]*$2" $1;then
+		sed -i "s|$2.*|$2$3|g" $1;
+	else
+		echo "$2$3" >> $1;
+	fi
+}
+
+juju-log "remove apt.conf proxy settings"
+rm /etc/apt/apt.conf.d/90curtin-aptproxy
+
+juju-log "create sources.list"
+nuage_repo=`config-get nuage-repo`
+
+cat <<EOF > /etc/apt/sources.list
+deb http://archive.ubuntu.com//ubuntu  precise main restricted universe multiverse
+deb http://archive.ubuntu.com//ubuntu  precise-updates main restricted universe multiverse
+deb http://archive.ubuntu.com//ubuntu  precise-security main restricted universe multiverse
+EOF
+
+echo $nuage_repo >> /etc/apt/sources.list
+
+juju-log "update sources.list"
+os_active_controller=`config-get os-controller-ip`
+
+juju-log "install ntp"
+apt-get install -y ntp
+
+juju-log "installing dkms linux-headers libjson-perl python-twisted"
+apt-get install -y dkms linux-headers-`uname -r` libjson-perl python-twisted
+
+juju-log "updating repository to grizzly"
+add-apt-repository cloud-archive:grizzly
+
+juju-log "apt-get update and upgrade"
+apt-get -y update
+apt-get -y upgrade
+
+juju-log "install saucy kernel"
+apt-get install --install-recommends linux-generic-lts-saucy
+
+juju-log "install dependencies"
+apt-get install qemu-kvm libvirt-bin dkms libjson-perl python-twisted-core vlan linux-headers-`uname -r`
+
+juju-log "install Nuage packages"
+apt-get install -y --force-yes nuage-openvswitch-common nuage-openvswitch-datapath-dkms nuage-python-openvswitch nuage-openvswitch-switch
+
+juju-log "configure VRS"
+vsc_active_controller=`config-get vsc-controller-ip`
+update_config_file /etc/default/openvswitch-switch "ACTIVE_CONTROLLER=" "$vsc_active_controller"
+update_config_file /etc/default/openvswitch-switch "STANDBY_CONTROLLER=" "$vsc_active_controller"

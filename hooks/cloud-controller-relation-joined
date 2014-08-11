@@ -1,0 +1,15 @@
+#!/bin/sh
+# This must be renamed to the name of the relation. The goal here is to
+# affect any change needed by relationships being formed
+# This script should be idempotent.
+juju-log $JUJU_REMOTE_UNIT joined
+
+controller-ip=`relation-get private-address`
+my-ip=`ifconfig br0 | awk -F ' *|:' '/inet addr/{print $4}'`
+
+cat <<EOF >> /etc/nova/nova.conf
+vnc_enabled = True
+vncserver_listen = 0.0.0.0
+vncserver_proxyclient_address = ${my-ip}
+novncproxy_base_url = http://${controller-ip}:6080/vnc_auto.html
+EOF

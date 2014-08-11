@@ -1,0 +1,12 @@
+name: nuage-nova-compute
+summary: nuage-nova-compute
+maintainer: Kamal Hussain <Kamal.Hussain@alcatel-lucent.com>
+description: |
+  Installs nuage-nova-compute node
+categories:
+  - misc
+subordinate: true
+requires:
+  cloud-compute:
+    interface: nova-compute
+    scope: container
