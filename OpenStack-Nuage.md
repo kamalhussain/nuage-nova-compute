@@ -110,11 +110,9 @@ nuage-nova-compute:
 
 Copy the nuage-nova-compute charm to the MAAS server under any directory. Deploy the charm with the following commands:
 
+```
 juju deploy --config=<nuage-nova-compute.config> --repository=<charm directory> local:precise/nuage-nova-compute
-juju add-relation nova-compute mysql
-juju add-relation nova-compute rabbitmq-server:amqp
-juju add-relation nova-compute nova-cloud-controller
-
+```
 
 The nuage-nova-compute is a subordinate charm to nova-compute which means these two charms get installed in the same container.
 
