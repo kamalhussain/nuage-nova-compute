@@ -1,6 +1,6 @@
 Installing OpenStack and Nuage using Ubuntu MAAS/Juju
 ========================================================
-Ubuntu Metal as a Service (MAAS) is a system to setup physical hardware for installing complex software products such as OpenStack. Juju is the service orchestration tool that help you easily build cloud environments. Juju can be used to deploy applications directly on a MAAS cluster.
+Ubuntu Metal as a Service (MAAS) is a system to setup physical hardware for installing complex software products such as OpenStack. Juju is the service orchestration tool that helps you easily build cloud environments. Juju can be used to deploy applications directly on a MAAS cluster.
 
 Please see the instructions below for installing OpenStack and Nuage on bare metal by using MAAS and Juju.
 
@@ -23,6 +23,7 @@ Juju charms are a collection of software components that allow you to deploy and
 ### Create a config file
 
 Create a configuration file with the following contents:
+
 ```
 mysql:
  openstack-origin: cloud:precise-havana
@@ -104,7 +105,7 @@ Once the repository is in place create a configuration file with the following c
 ```
 nuage-nova-compute:
  vsc-controller-ip: <VSC IP address>
- nuage-repo: deb http://10.209.0.10/nuage/2.1.2 /
+ nuage-repo: deb <repository location> /
 ```
 
 Copy the nuage-nova-compute charm to the MAAS server under any directory. Deploy the charm with the following commands:
@@ -118,3 +119,5 @@ juju add-relation nova-compute nova-cloud-controller
 The nuage-nova-compute is a subordinate charm to nova-compute which means these two charms get installed in the same container.
 
 You can additional computes by executing "juju add-unit nova-compute". This command will instantiate a new compute with nuage VRS.
+
+Please note that you need to manually install VSC, VSD and Neutron gateway by following the VSP documentation.
