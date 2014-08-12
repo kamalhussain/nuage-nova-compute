@@ -18,10 +18,6 @@ Finally, deploy the charm
 
 ```
 juju deploy --config=<config file> --repository=<charm directory> local:precise/nuage-nova-compute
-
-juju add-relation nova-compute mysql
-juju add-relation nova-compute rabbitmq-server:amqp
-juju add-relation nova-compute nova-cloud-controller
 ```
 
 
