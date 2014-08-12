@@ -17,7 +17,7 @@ nuage-nova-compute:
 Finally, deploy the charm 
 
 ```
-juju deploy --config=<config file> --repository=<charm directory> local:precise/nuage-nova-compute
+juju deploy --config=<config file> --repository=<charm directory> local:<directory>/nuage-nova-compute
 ```
 
 
